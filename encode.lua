@@ -1,5 +1,7 @@
 -------------------encode函数主要负责将传入的table转化为CyBuf格式数据----------------
 
+
+---------------encode主函数---------------------
 function encode(map,tab_count)
   
   if(tab_count==nil) then
@@ -7,16 +9,19 @@ function encode(map,tab_count)
   end
   
   local cybuf_str=''
-  
+  ---------------默认最外层不带大括号-----------
   for i=1,tab_count do
     cybuf_str=cybuf_str..'\t'
   end
   tab_count=tab_count+1
-  cybuf_str=cybuf_str.."{\n"
+  
+  if(tab_count>1) then
+    cybuf_str=cybuf_str.."{\n"
+  end
   
   for i,v in pairs(map) do
     
-    for i=1,tab_count do
+    for i=2,tab_count do
       cybuf_str=cybuf_str..'\t'
     end
     
@@ -38,11 +43,14 @@ function encode(map,tab_count)
   for i=1,tab_count-1 do
     cybuf_str=cybuf_str..'\t'
   end
-  
-  cybuf_str=cybuf_str..'}\n'
-  
+  ---------------默认最外层不带大括号-----------
+  if(tab_count>1) then
+    cybuf_str=cybuf_str..'}\n'
+  end
   return cybuf_str
 end
+
+-----------以下为测试数据------------
 
 a={}
 a["cy_name"]="cy"
@@ -53,5 +61,11 @@ a["school"]["name"]="Wuhan University"
 a["school"]["major"]={}
 a["school"]["major"]["name"]="CS"
 a["school"]["major"]["class"]="engineering"
+
+-----------以上为测试数据------------
+
+print("------------------↓↓↓  分割线：encode文件自带测试内容  ↓↓↓-------------------")
+
 print(encode(a))
 
+print("------------------↑↑↑  分割线：encode文件自带测试内容  ↑↑↑-------------------\n")

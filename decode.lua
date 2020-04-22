@@ -191,16 +191,16 @@ end
 
 -----------以下为测试数据------------
 
-a1='{school: {name: "whu"  age: 120   is_good: true    major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true     }'
+a1='{school: {name: "whu"  age: 120   is_good: true    major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true   }  '
 a2='  {   Name:"hello"  Age:10   Live: true     }   '
 a3='{ Name: "a hack data } " }'
 
 -----------以上为测试数据------------
 
-print("------------------分割线-------------------")
+print("------------------↓↓↓   分割线：decode文件自带测试内容  ↓↓↓-------------------")
 
 aa=decode(a1)
 print(encode(aa))
 
-print("------------------分割线-------------------")
+print("------------------↑↑↑   分割线：decode文件自带测试内容  ↑↑↑-------------------\n")
 
