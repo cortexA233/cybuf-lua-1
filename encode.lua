@@ -1,4 +1,4 @@
--------------------encode函数主要负责将传入的table转化为CyBuf格式数据----------------
+------------------此文件用给定table构造CyBuf格式数据----------------
 
 
 ---------------encode主函数---------------------
@@ -10,7 +10,7 @@ function encode(map,tab_count)
   
   local cybuf_str=''
   ---------------默认最外层不带大括号-----------
-  for i=1,tab_count do
+  for i=1,tab_count-1 do
     cybuf_str=cybuf_str..'\t'
   end
   tab_count=tab_count+1
@@ -40,13 +40,14 @@ function encode(map,tab_count)
     end
   end
   
-  for i=1,tab_count-1 do
+  for i=1,tab_count-2 do
     cybuf_str=cybuf_str..'\t'
   end
-  ---------------默认最外层不带大括号-----------
+  ---------------默认最外层不带大括号，且文件末尾无多余空行-----------
   if(tab_count>1) then
     cybuf_str=cybuf_str..'}\n'
   end
+  
   return cybuf_str
 end
 
