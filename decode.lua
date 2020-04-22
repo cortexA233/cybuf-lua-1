@@ -68,7 +68,7 @@ function decode(cybuf_data)
     end
     
     local c=cybuf_data.sub(cybuf_data,i,i)
-    if(i==data_size and cur_key~='') then
+    if(i==data_size and (cur_key~='' and cur_key~='}')) then
       if(c~=' ') then
         cur_val=cur_val..c
       end
@@ -81,17 +81,24 @@ function decode(cybuf_data)
       local son_data=''
       local son_ch=c
       local son_is_in_string=false
-      while(son_ch~='}' or son_is_in_string) do
+      local brace_count=1 -----------当前大括号层数计数
+      while(brace_count>0 or son_is_in_string) do
         i=i+1
+        son_data=son_data..son_ch
+        son_ch=cybuf_data.sub(cybuf_data,i,i)
         if(son_ch=='"') then
           son_is_in_string=not son_is_in_string
         end
-        son_data=son_data..son_ch
-        son_ch=cybuf_data.sub(cybuf_data,i,i)
+        if(son_ch=='{' and (not son_is_in_string)) then
+          brace_count=brace_count+1
+        end
+        if(son_ch=='}' and (not son_is_in_string)) then
+          brace_count=brace_count-1
+        end
       end
-      --if()
+      
       son_data=son_data..'}'
-   --   print(son_data..'??')
+      print(son_data..'??')
       i=i+1
    --   print(i,'!')
       target_table[cur_key]=decode(son_data)
@@ -169,14 +176,15 @@ function table_output(target_table,table_count)
   end
   
   for i,v in pairs(target_table) do
-    for i=0,table_count do
-      print('    ')
+    tab_str=''
+    for i=1,table_count do
+      tab_str=tab_str..'\t'
     end
     if(type(v)=="table") then
-      print(i,':\n')
+      print(tab_str..tostring(i),'('..type(v)..')',':\n')
       table_output(v,table_count+1)
     else
-      print(i,':',v,'('..type(v)..')')
+      print(tab_str..tostring(i),':',v,'('..type(v)..')')
     end
   end
 end
@@ -185,15 +193,15 @@ end
 
 --a='{	cy_name: "cy"	cy_age: 21	cy_is_virginal: false}'
 
-a='{school: {name: "whu"  age: 120   is_good: true }       Name:"hello"  Age:10   Live: true     }'
+a='{school: {name: "whu"  age: 120   is_good: true    major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true     }'
 a2='  {   Name:"hello"  Age:10   Live: true     }   '
 a3='{ Name: "a hack data } " }'
-aa=decode(a3)
+aa=decode(a)
 b={}
 b["aa"]=11
 print("------------------分割线-------------------")
 
----[[
+--[[
 for i,v in pairs(aa) do
   if(type(v)=="table") then
     print(i,':')
@@ -205,6 +213,6 @@ for i,v in pairs(aa) do
   end
 end
 --]]--
---table_output(aa)
+table_output(aa)
 print("------------------分割线-------------------")
 
