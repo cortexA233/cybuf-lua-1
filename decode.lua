@@ -1,4 +1,5 @@
 -------------此文件主要用于用cybuf格式数据构造table---------------
+require("encode")
 
 --------------基本类型值类型判断----------------
 function class_identify(val)
@@ -81,7 +82,7 @@ function decode(cybuf_data)
       local son_data=''
       local son_ch=c
       local son_is_in_string=false
-      local brace_count=1 -----------当前大括号层数计数
+      local brace_count=1 -----------子table当前大括号的嵌套层数计数
       while(brace_count>0 or son_is_in_string) do
         i=i+1
         son_data=son_data..son_ch
@@ -98,7 +99,7 @@ function decode(cybuf_data)
       end
       
       son_data=son_data..'}'
-      print(son_data..'??')
+    --  print(son_data..'??')
       i=i+1
    --   print(i,'!')
       target_table[cur_key]=decode(son_data)
@@ -168,7 +169,6 @@ function decode(cybuf_data)
   return target_table
 end
 
-
 ----------------输出decode返回的table----------------
 function table_output(target_table,table_count)
   if(table_count==nil) then
@@ -181,7 +181,7 @@ function table_output(target_table,table_count)
       tab_str=tab_str..'\t'
     end
     if(type(v)=="table") then
-      print(tab_str..tostring(i),'('..type(v)..')',':\n')
+      print(tab_str..tostring(i),'('..type(v)..')',':')
       table_output(v,table_count+1)
     else
       print(tab_str..tostring(i),':',v,'('..type(v)..')')
@@ -189,30 +189,18 @@ function table_output(target_table,table_count)
   end
 end
 
+-----------以下为测试数据------------
 
-
---a='{	cy_name: "cy"	cy_age: 21	cy_is_virginal: false}'
-
-a='{school: {name: "whu"  age: 120   is_good: true    major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true     }'
+a1='{school: {name: "whu"  age: 120   is_good: true    major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true     }'
 a2='  {   Name:"hello"  Age:10   Live: true     }   '
 a3='{ Name: "a hack data } " }'
-aa=decode(a)
-b={}
-b["aa"]=11
+
+-----------以上为测试数据------------
+
 print("------------------分割线-------------------")
 
---[[
-for i,v in pairs(aa) do
-  if(type(v)=="table") then
-    print(i,':')
-    for i,vv in pairs(v) do
-      print('\t',i,':',vv,type(vv))
-    end
-  else
-    print(i,':',v,type(v))
-  end
-end
---]]--
-table_output(aa)
+aa=decode(a1)
+print(encode(aa))
+
 print("------------------分割线-------------------")
 

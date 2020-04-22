@@ -35,8 +35,6 @@ function encode(map,tab_count)
     end
   end
   
-  cybuf_str=cybuf_str..'\n'
-  
   for i=1,tab_count-1 do
     cybuf_str=cybuf_str..'\t'
   end
@@ -46,4 +44,14 @@ function encode(map,tab_count)
   return cybuf_str
 end
 
+a={}
+a["cy_name"]="cy"
+a["cy_age"]=21
+a["cy_is_virginal"]=false
+a["school"]={}
+a["school"]["name"]="Wuhan University"
+a["school"]["major"]={}
+a["school"]["major"]["name"]="CS"
+a["school"]["major"]["class"]="engineering"
+print(encode(a))
 
