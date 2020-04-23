@@ -25,7 +25,7 @@ function encode_test(map,tab_count)
     if(type(v)~="table") then
       cybuf_str=cybuf_str..tostring(i)..': '
       if(type(v)=="string") then
-        cybuf_str=cybuf_str..'"'..tostring(v)..'"'..'\t('..type(v)..')'
+        cybuf_str=cybuf_str..tostring(v)..'\t('..type(v)..')'
       else
         cybuf_str=cybuf_str..tostring(v)..'\t('..type(v)..')'
       end

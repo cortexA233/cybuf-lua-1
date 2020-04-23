@@ -31,6 +31,7 @@ function judge_space_char(char)
   return false
 end
 
+
 -------------------decode主函数-------------------
 function decode(cybuf_data,is_array)
   if(is_array==nil) then
@@ -50,16 +51,17 @@ function decode(cybuf_data,is_array)
       data_size=data_size-1
       end_char=cybuf_data.sub(cybuf_data,data_size,data_size)
     end
-   -- data_size=data_size+1
+    
     local cur_downmark=1------------数组当前下标
     local target_array={}
     local cur_val=''
-    local i=data_begin+1
     local is_in_string=false
+    
+    local i=data_begin+1------------迭代变量
+    
     while(i<=data_size) do
       c=cybuf_data.sub(cybuf_data,i,i)
       i=i+1
-      
       if(c=='"') then
         if(is_in_string==true) then
           target_array[cur_downmark]=class_identify(cur_val)
@@ -125,15 +127,12 @@ function decode(cybuf_data,is_array)
   local cur_val=""
   local cur_key=""
   local cur_status=0 -----------cur_status为0表示当前读取的字符为key，否则为table
-  local is_in_string=false -----------表示当前是否在一组引号内
-  local is_in_colon=false -----------表示当前空格前一位是否为冒号
-  local table_count=0 ----------表示当前table嵌套的层数，待完成
+  local is_in_string=false -----------表示当前字符是否处于一组引号内
+  local table_count=0 ----------表示当前table嵌套的层数
   
-  local i=data_begin
+  local i=data_begin------------迭代变量
   
   while(i<=data_size) do
-    
-    
     local c=cybuf_data.sub(cybuf_data,i,i)
     if(i==data_size and (cur_key~='' and cur_key~='}')) then
       if(c~=' ') then
@@ -195,7 +194,7 @@ function decode(cybuf_data,is_array)
         
       end
       
-      i=i+1
+     -- i=i+1
       target_table[cur_key]=decode(son_data,true)
       cur_status=0
       cur_key=''
@@ -227,16 +226,12 @@ function decode(cybuf_data,is_array)
     if(not is_in_string) then
       if(c==':') then
         cur_status=1
-        is_in_colon=true
+        if(cybuf_data.sub(cybuf_data,i+1,i+1)==' ') then
+          i=i+1
+        end
         goto continue
       end
-      if(c==' ') then
-      ---[[  
-          if(is_in_colon) then
-          is_in_colon=false
-          goto continue
-        end
-        --]]--
+      if(judge_space_char(c)) then
         
         if(cur_key~='') then
           target_table[cur_key]=class_identify(cur_val)
@@ -266,15 +261,15 @@ end
 -----------以下为测试数据------------
 
 a1='{school: {name: "whu"  age: 120   is_good: true  opening_time: nil  major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true  }  '
-a2='  {   Name:"hello"  Age:10   Live: true    friends: ["tcg" "wmx" 1 2 3 true] }   '
-a3='{ Name: "a hack data } " }'
+a2='{Name:"hello"Age:10 Live:true friends:["csl""John Doe"1 2 3 true]major:{name:"cs"is_good:true}}'
+a3='{Name: "hello"  Age: 10 Live: true friends: ["csl" "John Doe" 1 2 3 true ]  major: {name:"cs"is_good:true} }'
 
 -----------以上为测试数据------------
 
 
 print("------------------↓↓↓  分割线：decode文件自带测试内容  ↓↓↓-------------------")
 
-aa=decode(a2)
+aa=decode(a3)
 print(encode_test(aa))
 
 print("------------------↑↑↑  分割线：decode文件自带测试内容  ↑↑↑-------------------\n")
