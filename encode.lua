@@ -1,5 +1,5 @@
 ------------------此文件用给定table构造CyBuf格式数据----------------
-
+require("test")
 
 ---------------encode主函数---------------------
 function encode(map,tab_count)
@@ -43,12 +43,16 @@ function encode(map,tab_count)
   for i=1,tab_count-2 do
     cybuf_str=cybuf_str..'\t'
   end
-  ---------------默认最外层不带大括号，且文件末尾无多余空行-----------
+  ---------------默认最外层不带大括号-----------
   if(tab_count>1) then
     cybuf_str=cybuf_str..'}\n'
   end
-  
+  --------------文件末尾无多余空行------------
+  if(tab_count<=1) then
+    return cybuf_str.sub(cybuf_str,1,#cybuf_str-1)
+  end
   return cybuf_str
+  
 end
 
 -----------以下为测试数据------------
@@ -67,6 +71,6 @@ a["school"]["major"]["class"]="engineering"
 
 print("------------------↓↓↓  分割线：encode文件自带测试内容  ↓↓↓-------------------")
 
-print(encode(a))
+print(encode_test(a))
 
 print("------------------↑↑↑  分割线：encode文件自带测试内容  ↑↑↑-------------------\n")
