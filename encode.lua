@@ -2,12 +2,14 @@
 require("test")
 
 ---------------encode主函数---------------------
-function encode(map,tab_count)
+function encode(map,tab_count,optional_divider)
   
   if(tab_count==nil) then
     tab_count=0
   end
-  
+  if(optional_divider==nil) then
+    optional_divider=''
+  end
   local cybuf_str=''
   ---------------默认最外层不带大括号-----------
   for i=1,tab_count-1 do

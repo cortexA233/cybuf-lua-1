@@ -1,5 +1,5 @@
 -------------此文件主要用于用cybuf格式数据构造table---------------
-require("encode")
+require("test")
 
 --------------基本类型值类型判断----------------
 function class_identify(val)
@@ -76,6 +76,77 @@ function decode(cybuf_data,is_array)
         goto array_continue
       end
       
+      ----------------数组中的子table----------
+      if(c=='{' and (not is_in_string)) then
+        if(cur_val~='') then
+          target_array[cur_downmark]=class_identify(cur_val)
+          cur_downmark=cur_downmark+1
+        end
+        
+        local son_table_data='{'
+        local son_is_in_string=false
+        local son_brace_count=1
+        while(son_brace_count>=1 or son_is_in_string) do
+          c=cybuf_data.sub(cybuf_data,i,i)
+          i=i+1
+          son_table_data=son_table_data..c
+          if(c=='"') then
+            son_is_in_string=not son_is_in_string
+          end
+          if(c=='{' and (not son_is_in_string)) then
+            son_brace_count=son_brace_count+1
+          end
+          if(c=='}' and (not son_is_in_string)) then
+            son_brace_count=son_brace_count-1
+          end
+          
+        end
+        son_table_data=son_table_data..''
+      --  i=i+1
+    --    print(son_table_data..'!!!')
+        target_array[cur_downmark]=decode(son_table_data)
+        cur_val=''
+        cur_downmark=cur_downmark+1
+        goto array_continue
+      end
+      
+      -----------------数组中的子数组---------------
+      if(c=='[' and (not is_in_string)) then
+        if(cur_val~='') then
+       --   print('val!!!!!!!!!!!!!!!!!')
+          target_array[cur_downmark]=class_identify(cur_val)
+          cur_val=''
+          cur_downmark=cur_downmark+1
+        end
+        local son_table_data='['
+        local son_is_in_string=false
+        local son_brace_count=1
+        while(son_brace_count>=1 or son_is_in_string) do
+         -- i=i+1
+          c=cybuf_data.sub(cybuf_data,i,i)
+          i=i+1
+          son_table_data=son_table_data..c
+          if(c=='"') then
+            son_is_in_string=not son_is_in_string
+          end
+          if(c=='[' and (not son_is_in_string)) then
+            son_brace_count=son_brace_count+1
+          end
+          if(c==']' and (not son_is_in_string)) then
+            son_brace_count=son_brace_count-1
+          end
+          
+        end
+        son_table_data=son_table_data..''
+        i=i+1
+     --   print(son_table_data..'!!!')
+        target_array[cur_downmark]=decode(son_table_data,true)
+        cur_val=''
+        cur_downmark=cur_downmark+1
+        goto array_continue
+      end
+      
+      ---------------空白字符判定--------------
       if(judge_space_char(c)) then
         if(cur_val~='') then
           target_array[cur_downmark]=class_identify(cur_val)
@@ -90,6 +161,7 @@ function decode(cybuf_data,is_array)
       if(i==data_size) then
         if(cur_val~='') then
           target_array[cur_downmark]=class_identify(cur_val)
+          cur_val=''
         end
         goto array_continue
       end
@@ -98,7 +170,6 @@ function decode(cybuf_data,is_array)
     end
     return target_array
   end
-  
   
   ------计算数据起始点-----
   local data_begin=1
@@ -193,8 +264,7 @@ function decode(cybuf_data,is_array)
         end
         
       end
-      
-     -- i=i+1
+    --  print(son_data..'&&&')
       target_table[cur_key]=decode(son_data,true)
       cur_status=0
       cur_key=''
@@ -232,7 +302,6 @@ function decode(cybuf_data,is_array)
         goto continue
       end
       if(judge_space_char(c)) then
-        
         if(cur_key~='') then
           target_table[cur_key]=class_identify(cur_val)
           cur_key=""
@@ -261,15 +330,15 @@ end
 -----------以下为测试数据------------
 
 a1='{school: {name: "whu"  age: 120   is_good: true  opening_time: nil  major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true  }  '
-a2='{Name:"hello"Age:10 Live:true friends:["csl""John Doe"1 2 3 true]major:{name:"cs"is_good:true}}'
-a3='{Name: "hello"  Age: 10 Live: true friends: ["csl" "John Doe" 1 2 3 true ]  major: {name:"cs"is_good:true} }'
+a2='{Name:"hello"Age:10 Live:true friends:["csl""John Doe"1 2 3 true{name:"sss"age:12}[11 22 33]]major:{name:"cs"is_good:true students:["a1""a2""a3"]}}'
+a3='{Name: "hello"  Age: 10 Live: true friends: ["csl" "John Doe" 1 2 3 true {name: "sss" age: 12} [11 22 33] ]  major: {name: "cs" is_good: true students: ["a1" "a2" "a3"]} }'
 
 -----------以上为测试数据------------
 
 
 print("------------------↓↓↓  分割线：decode文件自带测试内容  ↓↓↓-------------------")
 
-aa=decode(a3)
+aa=decode(a2)
 print(encode_test(aa))
 
 print("------------------↑↑↑  分割线：decode文件自带测试内容  ↑↑↑-------------------\n")
