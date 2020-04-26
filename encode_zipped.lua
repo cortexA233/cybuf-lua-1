@@ -1,8 +1,6 @@
 ------------------此文件用给定table构造CyBuf格式数据----------------
 require("test")
 
-
-
 ---------------encode_zipped主函数---------------------
 function encode_zipped(map,tab_count,optional_divider)
   
@@ -14,9 +12,7 @@ function encode_zipped(map,tab_count,optional_divider)
   end
   local cybuf_str=''
   ---------------默认最外层不带大括号-----------
-  for i=1,tab_count-1 do
-  --  cybuf_str=cybuf_str..'\t'
-  end
+  
   tab_count=tab_count+1
   
   if(tab_count>1) then
@@ -25,10 +21,6 @@ function encode_zipped(map,tab_count,optional_divider)
   
   for i,v in pairs(map) do
     
-    for i=2,tab_count do
-    --  cybuf_str=cybuf_str..'\t'
-    end
-    
     if(type(v)~="table") then
       cybuf_str=cybuf_str..tostring(i)..':'
       if(type(v)=="string") then
@@ -36,16 +28,11 @@ function encode_zipped(map,tab_count,optional_divider)
       else
         cybuf_str=cybuf_str..tostring(v)..' '
       end
-    --  cybuf_str=cybuf_str..'\n'
       
     else
       cybuf_str=cybuf_str..tostring(i)..':'
       cybuf_str=cybuf_str..encode_zipped(v,tab_count)
     end
-  end
-  
-  for i=1,tab_count-2 do
-  --  cybuf_str=cybuf_str..'\t'
   end
   ---------------默认最外层不带大括号-----------
   if(tab_count>1) then

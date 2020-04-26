@@ -1,0 +1,12 @@
+cy_age: 21
+cy_name: "cy"
+school: 
+{
+	major: 
+	{
+		class: "engineering"
+		name: "CS"
+	}
+	name: "Wuhan University"
+}
+cy_is_virginal: false

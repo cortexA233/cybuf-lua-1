@@ -51,7 +51,7 @@ function encode(map,tab_count,optional_divider)
   end
   --------------文件末尾无多余空行------------
   if(tab_count<=1) then
-    return cybuf_str.sub(cybuf_str,1,#cybuf_str-1)
+    return cybuf_str.sub(cybuf_str,1,#cybuf_str-1)..''
   end
   return cybuf_str
   
@@ -73,6 +73,6 @@ a["school"]["major"]["class"]="engineering"
 
 print("------------------↓↓↓  分割线：encode文件自带测试内容  ↓↓↓-------------------")
 
-print(encode_test(a))
+print(encode(a))
 
 print("------------------↑↑↑  分割线：encode文件自带测试内容  ↑↑↑-------------------\n")

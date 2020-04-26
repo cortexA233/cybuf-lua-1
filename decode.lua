@@ -18,8 +18,9 @@ function class_identify(val)
   end
   if(des_val==tostring(tonumber(des_val))) then
     des_val=tonumber(des_val)
+    return des_val
   end
-  return des_val
+  return des_val.sub(des_val,2,#des_val-1)
 end
 
 
@@ -64,10 +65,14 @@ function decode(cybuf_data,is_array)
       i=i+1
       if(c=='"') then
         if(is_in_string==true) then
+          cur_val=cur_val..'"'
           target_array[cur_downmark]=class_identify(cur_val)
           cur_val=''
           cur_downmark=cur_downmark+1
+        else
+          cur_val=cur_val..'"'
         end
+        
         is_in_string=not is_in_string
         goto array_continue
       end
@@ -274,12 +279,14 @@ function decode(cybuf_data,is_array)
     if(c=='"') then
       if(is_in_string) then
         is_in_string=false
+        cur_val=cur_val..'"'
         target_table[cur_key]=class_identify(cur_val)
         cur_key=""
         cur_val=""
         cur_status=0
       else
         is_in_string=true
+        cur_val=cur_val..'"'
       end
       goto continue
     end
@@ -331,14 +338,14 @@ end
 
 a1='{school: {name: "whu"  age: 120   is_good: true  opening_time: nil  major: {name:"cs"  is_good: true} }       Name:"hello"  Age:10   Live: true  }  '
 a2='{Name:"hello"Age:10 Live:true friends:["csl""John Doe"1 2 3 true{name:"sss"age:12}[11 22 33]]major:{name:"cs"is_good:true students:["a1""a2""a3"]}}'
-a3='{Name: "hello"  Age: 10 Live: true friends: ["csl" "John Doe" 1 2 3 true {name: "sss" age: 12} [11 22 33] ]  major: {name: "cs" is_good: true students: ["a1" "a2" "a3"]} }'
-
+a3='{Name: "nil"  test: "true"  Age: 11 Live: true friends: ["csl" "John Doe" 1 2 3 true {name: "sss" age: 12} [11 22 33] ]  major: {name: "cs" is_good: true students: ["a1" "a2" "a3"]} }'
+a4='[1 2 3 4 5]'
 -----------以上为测试数据------------
 
 
 print("------------------↓↓↓  分割线：decode文件自带测试内容  ↓↓↓-------------------")
 
-aa=decode(a2)
+aa=decode(a3)
 print(encode_test(aa))
 
 print("------------------↑↑↑  分割线：decode文件自带测试内容  ↑↑↑-------------------\n")
